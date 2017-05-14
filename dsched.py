@@ -22,10 +22,11 @@ DURATION_FOR_UNIT = {
 
 
 class Task:
-    def __init__(self, name, command, interval):
+    def __init__(self, name, command, interval, requires):
         self.name = name
         self.command = command
         self.interval = interval
+        self.requires = requires
         self._last_run = None
 
     def next_run(self):
@@ -39,8 +40,18 @@ class Task:
         self._last_run = arrow.now()
         logging.info('Done')
 
+    def can_run(self):
+        if not self.requires:
+            return True
+        logging.info('Running requirement check "%s"', self.requires)
+        returncode = subprocess.run(self.requires, shell=True).returncode
+        ok = returncode == 0
+        logging.info('Result: %d => %s', returncode, 'Yes' if ok else 'No')
+        return ok
+
     def __str__(self):
-        return '{s.name}: {s.command} - {s.interval}'.format(s=self)
+        return '{s.name}: c="{s.command}" r="{s.requires}" i={s.interval}' \
+            .format(s=self)
 
 
 def run(tasks):
@@ -48,7 +59,7 @@ def run(tasks):
         now = arrow.now()
         for task in tasks:
             next_run = task.next_run()
-            if not next_run or now >= next_run:
+            if (not next_run or now >= next_run) and task.can_run():
                 task.run()
         time.sleep(60)
 
@@ -72,7 +83,8 @@ def load_config(config_path):
         name = section[len(TASK_SECTION_PREFIX):]
         command = parser.get(section, 'command')
         interval = parser.get(section, 'interval')
-        yield Task(name, command, parse_interval(interval))
+        requires = parser.get(section, 'requires', fallback=None)
+        yield Task(name, command, parse_interval(interval), requires)
 
 
 def setup_logger(logfile, debug):

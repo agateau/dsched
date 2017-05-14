@@ -6,6 +6,9 @@
     command=
     interval=
 
+    # Optional: command which must succeed to run the task
+    requires=
+
 ## Files
 
 ~/.cache/dsched/tasks/<name>.log
