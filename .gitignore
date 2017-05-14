@@ -1,3 +1,6 @@
 __pycache__
 .*.swp
 venv
+build
+dist
+*.egg-info

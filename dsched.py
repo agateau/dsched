@@ -11,6 +11,11 @@ from configparser import ConfigParser
 import arrow
 
 
+__appname__ = 'dsched'
+__version__ = '0.1.0'
+__license__ = 'Apache 2.0'
+
+
 TASK_SECTION_PREFIX = 'task '
 
 
