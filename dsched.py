@@ -50,7 +50,7 @@ def run(tasks):
             next_run = task.next_run()
             if not next_run or now >= next_run:
                 task.run()
-        time.sleep(10)
+        time.sleep(60)
 
 
 def parse_interval(txt):
@@ -93,6 +93,9 @@ def main():
     parser.add_argument('--logfile')
 
     args = parser.parse_args()
+
+    if not os.path.exists(args.config):
+        parser.error('"{}" does not exist'.format(args.config))
 
     tasks = list(load_config(args.config))
 
