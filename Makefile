@@ -1,7 +1,7 @@
 all: venv
 
 clean:
-	-rm -rf venv
+	-rm -rf venv build dist dsched.egg-info
 
 venv:
 	virtualenv --python python3 venv
