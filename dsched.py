@@ -20,7 +20,7 @@ __version__ = '0.2.0'
 __license__ = 'Apache 2.0'
 
 
-TIMER_INTERVAL = 60 * 1000
+TIMER_INTERVAL = 30 * 1000
 
 
 TASK_SECTION_PREFIX = 'task '
@@ -48,9 +48,10 @@ class Task:
 
     def run(self):
         logging.info('Running "%s"', self)
-        subprocess.Popen(self.command, shell=True)
+        proc = subprocess.Popen(self.command, shell=True)
         self._last_run = arrow.now()
         logging.info('Done')
+        return proc
 
     def can_run(self):
         if not self.requires:
@@ -70,6 +71,7 @@ class Controller(QtCore.QObject):
     def __init__(self, tasks):
         super().__init__()
         self.tasks = tasks
+        self.processes = set()
         self.setup_timer()
         self.setup_tray()
 
@@ -97,7 +99,22 @@ class Controller(QtCore.QObject):
         for task in self.tasks:
             next_run = task.next_run()
             if (not next_run or now >= next_run) and task.can_run():
-                task.run()
+                process = task.run()
+                self.processes.add(process)
+
+        self.poll_children()
+
+    def poll_children(self):
+        remaining = set()
+        for process in self.processes:
+            returncode = process.poll()
+            if returncode is None:
+                logging.debug('"%s" is still running', process.args)
+                remaining.add(process)
+            else:
+                logging.info('"%s" terminated with code %d', process.args,
+                             process.returncode)
+        self.processes = remaining
 
 
 def parse_interval(txt):
