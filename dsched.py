@@ -90,7 +90,9 @@ class Controller(QtCore.QObject):
         self.tray.setIcon(QtGui.QIcon.fromTheme('oxygen'))
 
         self.menu = QtWidgets.QMenu()
-        self.menu.addAction(self.tr('&Quit'), QtCore.QCoreApplication.exit)
+        # Would be nicer to call QCoreApplication.exit instead, but that causes
+        # a segfault
+        self.menu.addAction(self.tr('&Quit'), sys.exit)
 
         self.tray.setContextMenu(self.menu)
 
