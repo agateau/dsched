@@ -16,7 +16,7 @@ setup(name=dsched.__appname__,
       install_requires=['arrow'],
       py_modules=['dsched'],
       entry_points={
-          'console_scripts': [
+          'gui_scripts': [
               'dsched = dsched:main',
           ],
       }
