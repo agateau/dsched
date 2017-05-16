@@ -2,18 +2,24 @@
 import argparse
 import logging
 import os
+import signal
 import subprocess
 import sys
-import time
 
 from configparser import ConfigParser
 
 import arrow
 
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
+
 
 __appname__ = 'dsched'
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 __license__ = 'Apache 2.0'
+
+
+TIMER_INTERVAL = 60 * 1000
 
 
 TASK_SECTION_PREFIX = 'task '
@@ -59,14 +65,26 @@ class Task:
             .format(s=self)
 
 
-def run(tasks):
-    while True:
+class Controller(QtCore.QObject):
+    def __init__(self, tasks):
+        super().__init__()
+        self.tasks = tasks
+        self.setup_timer()
+
+    def setup_timer(self):
+        self.timer = QtCore.QTimer(self)
+        self.timer.setInterval(TIMER_INTERVAL)
+        self.timer.setSingleShot(False)
+        self.timer.timeout.connect(self.run)
+        self.timer.start()
+        QtCore.QTimer.singleShot(0, self.run)
+
+    def run(self):
         now = arrow.now()
-        for task in tasks:
+        for task in self.tasks:
             next_run = task.next_run()
             if (not next_run or now >= next_run) and task.can_run():
                 task.run()
-        time.sleep(60)
 
 
 def parse_interval(txt):
@@ -100,19 +118,25 @@ def setup_logger(logfile, debug):
 
 
 def main():
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
     config_path = os.path.expandvars('$HOME/.config/dsched/dsched.conf')
+    logfile_path = os.path.expandvars('$HOME/.cache/dsched/dsched.log')
 
     parser = argparse.ArgumentParser()
     parser.description = 'Desktop task scheduler'
     parser.add_argument('-c', '--config', default=config_path)
     parser.add_argument('-l', '--list', action='store_true')
     parser.add_argument('--debug', action='store_true')
-    parser.add_argument('--logfile')
+    parser.add_argument('--logfile', default=logfile_path)
 
     args = parser.parse_args()
 
     if not os.path.exists(args.config):
         parser.error('"{}" does not exist'.format(args.config))
+
+    if not os.path.exists(logfile_path):
+        os.makedirs(os.path.dirname(logfile_path), exist_ok=True)
 
     tasks = list(load_config(args.config))
 
@@ -122,8 +146,10 @@ def main():
         return 0
 
     setup_logger(logfile=args.logfile, debug=args.debug)
-    run(tasks)
-    return 0
+
+    qapp = QtWidgets.QApplication(sys.argv)
+    controller = Controller(tasks)  # noqa
+    return qapp.exec_()
 
 
 if __name__ == '__main__':
