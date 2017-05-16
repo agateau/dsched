@@ -11,6 +11,7 @@ from configparser import ConfigParser
 import arrow
 
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 
@@ -70,14 +71,26 @@ class Controller(QtCore.QObject):
         super().__init__()
         self.tasks = tasks
         self.setup_timer()
+        self.setup_tray()
+
+        self.timer.start()
+        QtCore.QTimer.singleShot(0, self.run)
+        self.tray.show()
 
     def setup_timer(self):
         self.timer = QtCore.QTimer(self)
         self.timer.setInterval(TIMER_INTERVAL)
         self.timer.setSingleShot(False)
         self.timer.timeout.connect(self.run)
-        self.timer.start()
-        QtCore.QTimer.singleShot(0, self.run)
+
+    def setup_tray(self):
+        self.tray = QtWidgets.QSystemTrayIcon(self)
+        self.tray.setIcon(QtGui.QIcon.fromTheme('oxygen'))
+
+        self.menu = QtWidgets.QMenu()
+        self.menu.addAction(self.tr('&Quit'), QtCore.QCoreApplication.exit)
+
+        self.tray.setContextMenu(self.menu)
 
     def run(self):
         now = arrow.now()
