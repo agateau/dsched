@@ -3,7 +3,6 @@ import argparse
 import logging
 import os
 import signal
-import subprocess
 import sys
 
 from configparser import ConfigParser
@@ -48,7 +47,8 @@ class Task:
 
     def run(self):
         logging.info('Running "%s"', self)
-        proc = subprocess.Popen(self.command, shell=True)
+        proc = QtCore.QProcess()
+        proc.start('/bin/sh', ['-c', self.command], QtCore.QIODevice.ReadOnly)
         self._last_run = arrow.now()
         logging.info('Done')
         return proc
@@ -57,7 +57,7 @@ class Task:
         if not self.requires:
             return True
         logging.info('Running requirement check "%s"', self.requires)
-        returncode = subprocess.run(self.requires, shell=True).returncode
+        returncode = QtCore.QProcess.execute('/bin/sh', ['-c', self.requires])
         ok = returncode == 0
         logging.info('Result: %d => %s', returncode, 'Yes' if ok else 'No')
         return ok
@@ -102,21 +102,15 @@ class Controller(QtCore.QObject):
             next_run = task.next_run()
             if (not next_run or now >= next_run) and task.can_run():
                 process = task.run()
+                process.finished.connect(
+                    lambda returncode, status:
+                    self.on_finished(process, returncode, status))
                 self.processes.add(process)
 
-        self.poll_children()
-
-    def poll_children(self):
-        remaining = set()
-        for process in self.processes:
-            returncode = process.poll()
-            if returncode is None:
-                logging.debug('"%s" is still running', process.args)
-                remaining.add(process)
-            else:
-                logging.info('"%s" terminated with code %d', process.args,
-                             process.returncode)
-        self.processes = remaining
+    def on_finished(self, process, returncode, status):
+        cmd = process.arguments()[1]
+        logging.info('"%s" finished with code %d', cmd, returncode)
+        self.processes.remove(process)
 
 
 def parse_interval(txt):
