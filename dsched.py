@@ -46,11 +46,10 @@ class Task:
         return self._last_run.replace(seconds=self.interval)
 
     def run(self):
-        logging.info('Running "%s"', self)
+        logging.info('Starting "%s"', self)
         proc = QtCore.QProcess()
         proc.start('/bin/sh', ['-c', self.command], QtCore.QIODevice.ReadOnly)
         self._last_run = arrow.now()
-        logging.info('Done')
         return proc
 
     def can_run(self):
