@@ -67,6 +67,22 @@ class Task:
             .format(s=self)
 
 
+def create_tray_icon(letter, bgcolor, fgcolor):
+    bgcolor = QtGui.QColor(bgcolor)
+    fgcolor = QtGui.QColor(fgcolor)
+    pix = QtGui.QPixmap(22, 22)
+    pix.fill(QtCore.Qt.transparent)
+    painter = QtGui.QPainter(pix)
+    painter.setRenderHint(QtGui.QPainter.Antialiasing)
+    painter.setBrush(bgcolor)
+    painter.setPen(QtCore.Qt.NoPen)
+    painter.drawEllipse(pix.rect().adjusted(0, 0, -1, -1))
+    painter.setPen(fgcolor)
+    painter.drawText(pix.rect(), QtCore.Qt.AlignCenter, letter)
+    painter.end()
+    return QtGui.QIcon(pix)
+
+
 class Controller(QtCore.QObject):
     def __init__(self, tasks):
         super().__init__()
@@ -87,7 +103,8 @@ class Controller(QtCore.QObject):
 
     def setup_tray(self):
         self.tray = QtWidgets.QSystemTrayIcon(self)
-        self.tray.setIcon(QtGui.QIcon.fromTheme('oxygen'))
+        self.idle_icon = create_tray_icon('☾', '#667', 'white')
+        self.busy_icon = create_tray_icon('⚙', '#966', 'white')
 
         self.menu = QtWidgets.QMenu()
         # Would be nicer to call QCoreApplication.exit instead, but that causes
@@ -95,6 +112,19 @@ class Controller(QtCore.QObject):
         self.menu.addAction(self.tr('&Quit'), sys.exit)
 
         self.tray.setContextMenu(self.menu)
+
+        self.update_tray()
+
+    def update_tray(self):
+        if not self.processes:
+            self.tray.setIcon(self.idle_icon)
+            self.tray.setToolTip(self.tr('Idle'))
+            return
+
+        self.tray.setIcon(self.busy_icon)
+        tasks = ['• ' + x.arguments()[1] for x in self.processes]
+
+        self.tray.setToolTip('\n'.join(tasks))
 
     def run(self):
         now = arrow.now()
@@ -106,11 +136,13 @@ class Controller(QtCore.QObject):
                     lambda returncode, status:
                     self.on_finished(process, returncode, status))
                 self.processes.add(process)
+        self.update_tray()
 
     def on_finished(self, process, returncode, status):
         cmd = process.arguments()[1]
         logging.info('"%s" finished with code %d', cmd, returncode)
         self.processes.remove(process)
+        self.update_tray()
 
 
 def parse_interval(txt):
