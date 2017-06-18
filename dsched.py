@@ -132,13 +132,12 @@ class Controller(QtCore.QObject):
             next_run = task.next_run()
             if (not next_run or now >= next_run) and task.can_run():
                 process = task.run()
-                process.finished.connect(
-                    lambda returncode, status:
-                    self.on_finished(process, returncode, status))
+                process.finished.connect(self.on_finished)
                 self.processes.add(process)
         self.update_tray()
 
-    def on_finished(self, process, returncode, status):
+    def on_finished(self, returncode, status):
+        process = self.sender()
         cmd = process.arguments()[1]
         logging.info('"%s" finished with code %d', cmd, returncode)
         self.processes.remove(process)
