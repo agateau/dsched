@@ -2,6 +2,7 @@
 set(dsched_SRCS
     iniparser.cpp
     main.cpp
+    maincontroller.cpp
     task.cpp
     taskmodel.cpp
     tasktools.cpp

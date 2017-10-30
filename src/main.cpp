@@ -5,9 +5,9 @@
 
 #include <iostream>
 
+#include "maincontroller.h"
 #include "task.h"
 #include "tasktools.h"
-#include "window.h"
 
 using namespace std;
 
@@ -42,6 +42,12 @@ struct CommandLineArgs
     }
 };
 
+static void setupLogger(const CommandLineArgs& args)
+{
+    Q_UNUSED(args)
+    qDebug() << "TODO: implement setupLogger";
+}
+
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
@@ -63,7 +69,8 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    Window window;
-    window.show();
+    setupLogger(args);
+
+    MainController controller(tasks);
     return app.exec();
 }
