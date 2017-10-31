@@ -5,7 +5,7 @@
 
 QProcess* Task::run()
 {
-    qInfo() << "Starting" << name;
+    qInfo("Starting \"%s\"", qPrintable(name));
     QProcess* process = new QProcess();
     process->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
     mLastRun = QDateTime::currentDateTime();
@@ -17,10 +17,10 @@ bool Task::canRun() const
     if (requires.isNull()) {
         return true;
     }
-    qInfo() << "Running requirement check:" << requires;
+    qInfo("Running requirement check \"%s\"", qPrintable(requires));
     int exitCode = QProcess::execute("/bin/sh", {"-c", requires});
     bool ok = exitCode == 0;
-    qInfo() << "Exit code:" << exitCode << "=>" << (ok ? "Yes" : "No");
+    qInfo("Exit code: %d => %s", exitCode, ok ? "Yes" : "No");
     return ok;
 }
 
