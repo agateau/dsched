@@ -50,6 +50,7 @@ int main(int argc, char** argv)
 
     CommandLineArgs args;
     args.parseArguments(app);
+    Logger::setup(args.logPath, args.debug ? Logger::Mode::Debug : Logger::Mode::Normal);
 
     QString error;
     QList<Task> tasks = TaskTools::load(args.configPath, &error);
@@ -65,8 +66,6 @@ int main(int argc, char** argv)
         }
         return 0;
     }
-
-    Logger::setup(args.logPath, args.debug ? Logger::Mode::Debug : Logger::Mode::Normal);
 
     MainController controller(tasks);
     return app.exec();
