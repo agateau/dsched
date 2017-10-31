@@ -16,7 +16,7 @@ namespace TaskTools
 seconds parseInterval(const QString& txt, QString* error)
 {
     Q_ASSERT(error);
-    QHash<QChar, int> DURATION_FOR_UNIT = {
+    const QHash<QChar, int> DURATION_FOR_UNIT = {
         {'s', 1},
         {'m', 60},
         {'h', 60 * 60},
@@ -38,7 +38,12 @@ seconds parseInterval(const QString& txt, QString* error)
             *error = QString("Failed to parse %1").arg(token);
             return {};
         }
-        interval += value * seconds(DURATION_FOR_UNIT[unit]);
+        auto it = DURATION_FOR_UNIT.find(unit);
+        if (it == DURATION_FOR_UNIT.constEnd()) {
+            *error = QString("Invalid unit '%1'").arg(unit);
+            return {};
+        }
+        interval += value * seconds(it.value());
     }
     return interval;
 }
