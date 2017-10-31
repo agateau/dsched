@@ -1,6 +1,7 @@
 # Sources
 set(dsched_SRCS
     iniparser.cpp
+    logger.cpp
     main.cpp
     maincontroller.cpp
     task.cpp
