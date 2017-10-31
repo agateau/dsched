@@ -1,8 +1,12 @@
 #ifndef MAINCONTROLLER_H
 #define MAINCONTROLLER_H
 
+#include <QMenu>
+#include <QIcon>
 #include <QObject>
+#include <QScopedPointer>
 #include <QSet>
+#include <QSystemTrayIcon>
 #include <QTimer>
 
 #include "task.h"
@@ -21,6 +25,10 @@ private:
     void onFinished(QProcess* process, int exitCode);
 
     QTimer* mTimer;
+    QSystemTrayIcon* mTray;
+    QScopedPointer<QMenu> mMenu;
+    QIcon mIdleIcon;
+    QIcon mBusyIcon;
     QList<Task> mTasks;
     QSet<QProcess*> mProcesses;
 };
