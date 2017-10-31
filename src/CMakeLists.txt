@@ -7,7 +7,7 @@ set(dsched_SRCS
     task.cpp
     taskmodel.cpp
     tasktools.cpp
-    window.cpp
+    mainwindow.cpp
 )
 
 # Building

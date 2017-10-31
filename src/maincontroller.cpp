@@ -10,6 +10,9 @@
 #include <QProcess>
 #include <QTimer>
 
+#include "mainwindow.h"
+#include "taskmodel.h"
+
 static const int TIMER_INTERVAL = 30 * 1000;
 
 static const QChar MOON_CHAR(0x263E);
@@ -19,8 +22,9 @@ MainController::MainController(const QList<Task>& tasks)
 : mTimer(new QTimer(this))
 , mTray(new QSystemTrayIcon(this))
 , mMenu(new QMenu)
-, mTasks(tasks)
+, mTaskModel(new TaskModel(this))
 {
+    mTaskModel->setTasks(tasks);
     setupTimer();
     setupTray();
     QTimer::singleShot(0, this, &MainController::run);
@@ -55,6 +59,7 @@ void MainController::setupTray()
     mIdleIcon = createTrayIcon(MOON_CHAR, "#667", "white");
     mBusyIcon = createTrayIcon(GEAR_CHAR, "#966", "white");
 
+    mMenu->addAction(tr("&Show"), this, &MainController::showWindow);
     mMenu->addAction(tr("&Quit"), QCoreApplication::instance(), &QCoreApplication::exit);
     mTray->setContextMenu(mMenu.data());
 
@@ -74,12 +79,17 @@ void MainController::updateTray()
     }
     mTray->setIcon(mBusyIcon);
     mTray->setToolTip(lst.join('\n'));
+    connect(mTray, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
+        if (reason == QSystemTrayIcon::Trigger) {
+            showWindow();
+        }
+    });
 }
 
 void MainController::run()
 {
     QDateTime now = QDateTime::currentDateTime();
-    for (Task& task : mTasks) {
+    for (Task& task : mTaskModel->tasks()) {
         QDateTime nextRun = task.nextRun();
         if ((nextRun.isNull() || nextRun <= now) && task.canRun()) {
             QProcess* process = task.run();
@@ -98,4 +108,14 @@ void MainController::onFinished(QProcess* process, int exitCode)
     qInfo() << cmd << "finished with code" << exitCode;
     mProcesses.remove(process);
     updateTray();
+}
+
+void MainController::showWindow()
+{
+    if (mWindow) {
+        mWindow->raise();
+        return;
+    }
+    mWindow = new MainWindow(mTaskModel);
+    mWindow->show();
 }

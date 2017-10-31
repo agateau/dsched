@@ -7,6 +7,12 @@
 
 class TaskModel : public QAbstractListModel {
 public:
+    TaskModel(QObject* parent = nullptr);
+
+    void setTasks(const QList<Task>& tasks);
+
+    QList<Task> tasks() const;
+
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 

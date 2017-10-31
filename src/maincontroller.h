@@ -4,12 +4,16 @@
 #include <QMenu>
 #include <QIcon>
 #include <QObject>
+#include <QPointer>
 #include <QScopedPointer>
 #include <QSet>
 #include <QSystemTrayIcon>
 #include <QTimer>
 
 #include "task.h"
+
+class MainWindow;
+class TaskModel;
 
 class MainController : public QObject
 {
@@ -23,13 +27,15 @@ private:
     void updateTray();
     void run();
     void onFinished(QProcess* process, int exitCode);
+    void showWindow();
 
     QTimer* mTimer;
     QSystemTrayIcon* mTray;
     QScopedPointer<QMenu> mMenu;
     QIcon mIdleIcon;
     QIcon mBusyIcon;
-    QList<Task> mTasks;
+    QPointer<MainWindow> mWindow;
+    TaskModel* mTaskModel;
     QSet<QProcess*> mProcesses;
 };
 
