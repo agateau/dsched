@@ -14,8 +14,14 @@ QProcess* Task::run()
 
 bool Task::canRun() const
 {
-    qDebug() << "TODO canRun";
-    return true;
+    if (requires.isNull()) {
+        return true;
+    }
+    qInfo() << "Running requirement check:" << requires;
+    int exitCode = QProcess::execute("/bin/sh", {"-c", requires});
+    bool ok = exitCode == 0;
+    qInfo() << "Exit code:" << exitCode << "=>" << (ok ? "Yes" : "No");
+    return ok;
 }
 
 QDateTime Task::nextRun() const
