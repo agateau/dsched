@@ -2,6 +2,7 @@
 #include <QCommandLineParser>
 #include <QDebug>
 #include <QDir>
+#include <QMessageBox>
 
 #include <iostream>
 
@@ -53,7 +54,8 @@ int main(int argc, char** argv)
     QString error;
     QList<Task> tasks = TaskTools::load(args.configPath, &error);
     if (!error.isEmpty()) {
-        cerr << qPrintable(error) << '\n';
+        QString message = QObject::tr("<b>Failed to parse %1</b><br><br>%2").arg(args.configPath).arg(error);
+        QMessageBox::critical(nullptr, QObject::tr("Dsched"), message);
         return 2;
     }
 
