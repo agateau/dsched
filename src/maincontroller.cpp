@@ -64,6 +64,12 @@ void MainController::setupTray()
     mMenu->addAction(tr("&Quit"), QCoreApplication::instance(), &QCoreApplication::exit);
     mTray->setContextMenu(mMenu.data());
 
+    connect(mTray, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
+        if (reason == QSystemTrayIcon::Trigger) {
+            showWindow();
+        }
+    });
+
     updateTray();
 }
 
@@ -80,11 +86,6 @@ void MainController::updateTray()
     }
     mTray->setIcon(mBusyIcon);
     mTray->setToolTip(lst.join('\n'));
-    connect(mTray, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
-        if (reason == QSystemTrayIcon::Trigger) {
-            showWindow();
-        }
-    });
 }
 
 void MainController::run()
