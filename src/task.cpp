@@ -5,7 +5,10 @@
 
 void Task::run()
 {
-    Q_ASSERT(!mProcess);
+    if (mProcess) {
+        qInfo("Not starting \"%s\", it is already running", qPrintable(name));
+        return;
+    }
     qInfo("Starting \"%s\"", qPrintable(name));
 
     mProcess = new QProcess();
