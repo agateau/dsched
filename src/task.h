@@ -1,8 +1,10 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include <QFile>
 #include <QDateTime>
 #include <QObject>
+#include <QScopedPointer>
 #include <QSharedData>
 #include <QString>
 
@@ -20,6 +22,7 @@ public:
     std::chrono::seconds interval;
     QString requires;
 
+    void setTasksLogDirName(const QString& dirName);
     void run();
     bool isRunning() const;
 
@@ -32,7 +35,10 @@ Q_SIGNALS:
 
 private:
     void onFinished(int exitCode);
+    void readProcessOutput();
+    void writeLog(const QString& message);
     QDateTime mLastRun;
+    QScopedPointer<QFile> mLogFile;
     QProcess* mProcess = nullptr;
 };
 

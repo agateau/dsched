@@ -16,13 +16,13 @@ using namespace std;
 struct CommandLineArgs
 {
     QString configPath;
-    QString logPath;
+    QString logDirName;
     bool list = false;
     bool debug = false;
 
     CommandLineArgs()
     : configPath(QDir::home().absoluteFilePath(".config/dsched/dsched.conf"))
-    , logPath(QDir::home().absoluteFilePath(".cache/dsched/dsched.log"))
+    , logDirName(QDir::home().absoluteFilePath(".cache/dsched"))
     {}
 
     void parseArguments(const QCoreApplication& app)
@@ -32,7 +32,7 @@ struct CommandLineArgs
                 "CONFIG_FILE", configPath});
         parser.addOption({{"l", "list"}, "List tasks."});
         parser.addOption({"debug", "Start in debug mode."});
-        parser.addOption({"logfile", "Path to Dsched log file.", "LOG_FILE", logPath});
+        parser.addOption({"logdir", "Path to Dsched log dir.", "LOG_DIR", logDirName});
         parser.addHelpOption();
 
         parser.process(app);
@@ -40,7 +40,7 @@ struct CommandLineArgs
         debug = parser.isSet("debug");
         list = parser.isSet("list");
         configPath = parser.value("config");
-        logPath = parser.value("logfile");
+        logDirName = parser.value("logdir");
     }
 };
 
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 
     CommandLineArgs args;
     args.parseArguments(app);
-    Logger::setup(args.logPath, args.debug ? Logger::Mode::Debug : Logger::Mode::Normal);
+    Logger::setup(args.logDirName + "/dsched.log", args.debug ? Logger::Mode::Debug : Logger::Mode::Normal);
 
     QString error;
     QList<TaskPtr> tasks = TaskTools::load(args.configPath, &error);
@@ -65,6 +65,10 @@ int main(int argc, char** argv)
             cout << *task;
         }
         return 0;
+    }
+
+    for(auto& task : tasks) {
+        task->setTasksLogDirName(args.logDirName + "/tasks/");
     }
 
     MainController controller(tasks);
