@@ -19,7 +19,7 @@ class MainController : public QObject
 {
     Q_OBJECT
 public:
-    explicit MainController(const QList<Task>& tasks);
+    explicit MainController(const QList<TaskPtr>& tasks);
 
 private:
     void setupTimer();

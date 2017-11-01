@@ -53,7 +53,7 @@ int main(int argc, char** argv)
     Logger::setup(args.logPath, args.debug ? Logger::Mode::Debug : Logger::Mode::Normal);
 
     QString error;
-    QList<Task> tasks = TaskTools::load(args.configPath, &error);
+    QList<TaskPtr> tasks = TaskTools::load(args.configPath, &error);
     if (!error.isEmpty()) {
         QString message = QObject::tr("<b>Failed to parse %1</b><br><br>%2").arg(args.configPath).arg(error);
         QMessageBox::critical(nullptr, QObject::tr("Dsched"), message);
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 
     if (args.list) {
         for(const auto& task : tasks) {
-            cout << task;
+            cout << *task;
         }
         return 0;
     }

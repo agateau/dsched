@@ -7,14 +7,14 @@ TaskModel::TaskModel(QObject* parent)
 {
 }
 
-void TaskModel::setTasks(const QList<Task>& tasks)
+void TaskModel::setTasks(const QList<TaskPtr>& tasks)
 {
     beginResetModel();
     mTasks = tasks;
     endResetModel();
 }
 
-QList<Task> TaskModel::tasks() const
+QList<TaskPtr> TaskModel::tasks() const
 {
     return mTasks;
 }
@@ -31,11 +31,11 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const
         qWarning() << "Invalid row" << row;
         return QVariant();
     }
-    const Task& task = mTasks.at(row);
+    TaskPtr task = mTasks.at(row);
 
     switch (role) {
     case Qt::DisplayRole:
-        return task.name;
+        return task->name;
     default:
         return QVariant();
     }

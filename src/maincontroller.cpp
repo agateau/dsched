@@ -18,7 +18,7 @@ static const int TIMER_INTERVAL = 30 * 1000;
 static const QChar MOON_CHAR(0x263E);
 static const QChar GEAR_CHAR(0x2699);
 
-MainController::MainController(const QList<Task>& tasks)
+MainController::MainController(const QList<TaskPtr>& tasks)
 : mTimer(new QTimer(this))
 , mTray(new QSystemTrayIcon(this))
 , mMenu(new QMenu)
@@ -89,10 +89,10 @@ void MainController::updateTray()
 void MainController::run()
 {
     QDateTime now = QDateTime::currentDateTime();
-    for (Task& task : mTaskModel->tasks()) {
-        QDateTime nextRun = task.nextRun();
-        if ((nextRun.isNull() || nextRun <= now) && task.canRun()) {
-            QProcess* process = task.run();
+    for (auto& task : mTaskModel->tasks()) {
+        QDateTime nextRun = task->nextRun();
+        if ((nextRun.isNull() || nextRun <= now) && task->canRun()) {
+            QProcess* process = task->run();
             connect(process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
                     this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
                         onFinished(process, exitCode);

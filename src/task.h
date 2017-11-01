@@ -2,6 +2,8 @@
 #define TASK_H
 
 #include <QDateTime>
+#include <QSharedData>
+#include <QPointer>
 #include <QString>
 
 #include <chrono>
@@ -9,7 +11,7 @@
 
 class QProcess;
 
-struct Task
+struct Task : public QSharedData
 {
     QString name;
     QString command;
@@ -23,6 +25,8 @@ struct Task
 private:
     QDateTime mLastRun;
 };
+
+using TaskPtr = QExplicitlySharedDataPointer<Task>;
 
 std::ostream& operator<<(std::ostream& ostr, const Task& task);
 

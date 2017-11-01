@@ -10,7 +10,7 @@
 namespace TaskTools
 {
 
-QList<Task> load(const QString& path, QString* error);
+QList<TaskPtr> load(const QString& path, QString* error);
 
 std::chrono::seconds parseInterval(const QString& txt, QString* error);
 

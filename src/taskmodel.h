@@ -9,15 +9,15 @@ class TaskModel : public QAbstractListModel {
 public:
     TaskModel(QObject* parent = nullptr);
 
-    void setTasks(const QList<Task>& tasks);
+    void setTasks(const QList<TaskPtr>& tasks);
 
-    QList<Task> tasks() const;
+    QList<TaskPtr> tasks() const;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
 private:
-    QList<Task> mTasks;
+    QList<TaskPtr> mTasks;
 };
 
 #endif /* TASKMODEL_H */
