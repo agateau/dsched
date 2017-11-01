@@ -36,7 +36,8 @@ Q_SIGNALS:
 private:
     void onFinished(int exitCode);
     void readProcessOutput();
-    void writeLog(const QString& message);
+    void writeTitleLog(const QString& title);
+    void writeLog(const QByteArray& data);
     QDateTime mLastRun;
     QScopedPointer<QFile> mLogFile;
     QProcess* mProcess = nullptr;

@@ -37,7 +37,7 @@ void Task::run()
     connect(mProcess, &QProcess::readyReadStandardOutput, this, &Task::readProcessOutput);
 
     mLastRun = QDateTime::currentDateTime();
-    writeLog(QString("Starting %1").arg(command));
+    writeTitleLog(QString("Starting %1").arg(command));
     mProcess->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
     runningChanged(true);
 }
@@ -77,7 +77,7 @@ void Task::onFinished(int exitCode)
     qInfo() << name << "finished with code" << exitCode;
     mProcess->deleteLater();
     mProcess = nullptr;
-    writeLog(QString("Finished with code %1").arg(exitCode));
+    writeTitleLog(QString("Finished with code %1").arg(exitCode));
     runningChanged(false);
 }
 
@@ -85,23 +85,22 @@ void Task::readProcessOutput()
 {
     Q_ASSERT(mProcess);
     QByteArray output = mProcess->readAllStandardOutput();
-    if (mLogFile) {
-        mLogFile->write(output);
-        mLogFile->flush();
-    }
+    writeLog(output);
 }
 
-void Task::writeLog(const QString& message)
+void Task::writeTitleLog(const QString& message)
 {
-    if (!mLogFile) {
-        return;
+    QString timeStamp = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString msg = QString("-- %1: %2 --\n").arg(timeStamp).arg(message);
+    writeLog(msg.toUtf8());
+}
+
+void Task::writeLog(const QByteArray& data)
+{
+    if (mLogFile) {
+        mLogFile->write(data);
+        mLogFile->flush();
     }
-    mLogFile->write("-- ");
-    mLogFile->write(QDateTime::currentDateTime().toString(Qt::ISODate).toUtf8());
-    mLogFile->write(" ");
-    mLogFile->write(message.toUtf8());
-    mLogFile->write(" --\n");
-    mLogFile->flush();
 }
 
 std::ostream& operator<<(std::ostream& ostr, const Task& task)
