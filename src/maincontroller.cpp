@@ -29,6 +29,7 @@ MainController::MainController(const QList<TaskPtr>& tasks)
     setupTray();
     QTimer::singleShot(0, this, &MainController::run);
     mTray->show();
+    mTimer->start();
 }
 
 void MainController::setupTimer()
