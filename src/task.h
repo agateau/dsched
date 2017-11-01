@@ -2,8 +2,8 @@
 #define TASK_H
 
 #include <QDateTime>
+#include <QObject>
 #include <QSharedData>
-#include <QPointer>
 #include <QString>
 
 #include <chrono>
@@ -33,7 +33,7 @@ Q_SIGNALS:
 private:
     void onFinished(int exitCode);
     QDateTime mLastRun;
-    QPointer<QProcess> mProcess;
+    QProcess* mProcess = nullptr;
 };
 
 using TaskPtr = QExplicitlySharedDataPointer<Task>;

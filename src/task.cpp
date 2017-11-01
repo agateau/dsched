@@ -12,11 +12,8 @@ void Task::run()
     qInfo("Starting \"%s\"", qPrintable(name));
 
     mProcess = new QProcess();
-    QObject::connect(mProcess, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
-                     this, &Task::onFinished);
-    QObject::connect(mProcess, &QObject::destroyed, this, [this] {
-            runningChanged(false);
-    });
+    connect(mProcess, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+            this, &Task::onFinished);
 
     mLastRun = QDateTime::currentDateTime();
     mProcess->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
@@ -57,6 +54,8 @@ void Task::onFinished(int exitCode)
 {
     qInfo() << name << "finished with code" << exitCode;
     mProcess->deleteLater();
+    mProcess = nullptr;
+    runningChanged(false);
 }
 
 std::ostream& operator<<(std::ostream& ostr, const Task& task)
