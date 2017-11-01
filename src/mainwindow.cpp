@@ -15,16 +15,33 @@ MainWindow::MainWindow(TaskModel* model)
 void MainWindow::onTaskSelected(const QModelIndex& index)
 {
     int row = index.row();
+    TaskPtr task;
     if (row >= 0) {
-        TaskPtr task = mModel->tasks().at(row);
-        setCurrentTask(task);
+        task = mModel->tasks().at(row);
     }
+    setCurrentTask(task);
 }
 
 void MainWindow::setCurrentTask(const TaskPtr& task)
 {
-    QString status = task->isRunning() ? tr("Running") : tr("Not running");
-    QString lastRun = task->lastRun().isNull() ? tr("Never") : task->lastRun().toString();
+    if (mCurrentTask == task) {
+        return;
+    }
+    if (mCurrentTask) {
+        disconnect(mCurrentTask.data(), nullptr, this, nullptr);
+    }
+    mCurrentTask = task;
+    connect(mCurrentTask.data(), &Task::runningChanged, this, &MainWindow::updateTaskView);
+    updateTaskView();
+}
+
+void MainWindow::updateTaskView()
+{
+    if (!mCurrentTask) {
+        return;
+    }
+    QString status = mCurrentTask->isRunning() ? tr("Running") : tr("Not running");
+    QString lastRun = mCurrentTask->lastRun().isNull() ? tr("Never") : mCurrentTask->lastRun().toString();
 
     mUi->statusLabel->setText(status);
     mUi->lastRunLabel->setText(lastRun);

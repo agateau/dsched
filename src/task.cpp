@@ -11,9 +11,13 @@ QProcess* Task::run()
     mProcess = new QProcess();
     QObject::connect(mProcess, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
                      mProcess, &QObject::deleteLater);
+    QObject::connect(mProcess, &QObject::destroyed, this, [this] {
+            runningChanged(false);
+    });
 
     mLastRun = QDateTime::currentDateTime();
     mProcess->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
+    runningChanged(true);
     return mProcess;
 }
 

@@ -18,9 +18,12 @@ public:
 private:
     void onTaskSelected(const QModelIndex& index);
     void setCurrentTask(const TaskPtr& task);
+    void updateTaskView();
 
     QScopedPointer<Ui_MainWindow> mUi;
     TaskModel* mModel;
+
+    TaskPtr mCurrentTask;
 };
 
 #endif // MAINWINDOW_H

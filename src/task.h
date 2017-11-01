@@ -11,8 +11,10 @@
 
 class QProcess;
 
-struct Task : public QSharedData
+class Task : public QObject, public QSharedData
 {
+    Q_OBJECT
+public:
     QString name;
     QString command;
     std::chrono::seconds interval;
@@ -24,6 +26,9 @@ struct Task : public QSharedData
     bool canRun() const;
     QDateTime nextRun() const;
     QDateTime lastRun() const;
+
+Q_SIGNALS:
+    void runningChanged(bool running);
 
 private:
     QDateTime mLastRun;
