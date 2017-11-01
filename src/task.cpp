@@ -5,11 +5,21 @@
 
 QProcess* Task::run()
 {
+    Q_ASSERT(!mProcess);
     qInfo("Starting \"%s\"", qPrintable(name));
-    QProcess* process = new QProcess();
-    process->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
+
+    mProcess = new QProcess();
+    QObject::connect(mProcess, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+                     mProcess, &QObject::deleteLater);
+
     mLastRun = QDateTime::currentDateTime();
-    return process;
+    mProcess->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
+    return mProcess;
+}
+
+bool Task::isRunning() const
+{
+    return mProcess;
 }
 
 bool Task::canRun() const
@@ -22,6 +32,11 @@ bool Task::canRun() const
     bool ok = exitCode == 0;
     qInfo("Exit code: %d => %s", exitCode, ok ? "Yes" : "No");
     return ok;
+}
+
+QDateTime Task::lastRun() const
+{
+    return mLastRun;
 }
 
 QDateTime Task::nextRun() const

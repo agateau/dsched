@@ -19,11 +19,15 @@ struct Task : public QSharedData
     QString requires;
 
     QProcess* run();
+    bool isRunning() const;
+
     bool canRun() const;
     QDateTime nextRun() const;
+    QDateTime lastRun() const;
 
 private:
     QDateTime mLastRun;
+    QPointer<QProcess> mProcess;
 };
 
 using TaskPtr = QExplicitlySharedDataPointer<Task>;
