@@ -20,7 +20,7 @@ public:
     std::chrono::seconds interval;
     QString requires;
 
-    QProcess* run();
+    void run();
     bool isRunning() const;
 
     bool canRun() const;
@@ -31,6 +31,7 @@ Q_SIGNALS:
     void runningChanged(bool running);
 
 private:
+    void onFinished(int exitCode);
     QDateTime mLastRun;
     QPointer<QProcess> mProcess;
 };

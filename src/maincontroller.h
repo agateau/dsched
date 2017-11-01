@@ -6,7 +6,6 @@
 #include <QObject>
 #include <QPointer>
 #include <QScopedPointer>
-#include <QSet>
 #include <QSystemTrayIcon>
 #include <QTimer>
 
@@ -26,7 +25,6 @@ private:
     void setupTray();
     void updateTray();
     void run();
-    void onFinished(QProcess* process, int exitCode);
     void showWindow();
 
     QTimer* mTimer;
@@ -36,7 +34,6 @@ private:
     QIcon mBusyIcon;
     QPointer<MainWindow> mWindow;
     TaskModel* mTaskModel;
-    QSet<QProcess*> mProcesses;
 };
 
 #endif /* MAINCONTROLLER_H */

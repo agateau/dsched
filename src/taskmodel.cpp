@@ -11,12 +11,26 @@ void TaskModel::setTasks(const QList<TaskPtr>& tasks)
 {
     beginResetModel();
     mTasks = tasks;
+    for (const auto& task : mTasks) {
+        connect(task.data(), &Task::runningChanged, this, &TaskModel::runningTasksChanged);
+    }
     endResetModel();
 }
 
 QList<TaskPtr> TaskModel::tasks() const
 {
     return mTasks;
+}
+
+QList<TaskPtr> TaskModel::runningTasks() const
+{
+    QList<TaskPtr> lst;
+    for (const auto& task : mTasks) {
+        if (task->isRunning()) {
+            lst << task;
+        }
+    }
+    return lst;
 }
 
 int TaskModel::rowCount(const QModelIndex& parent) const

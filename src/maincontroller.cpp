@@ -64,6 +64,8 @@ void MainController::setupTray()
     mMenu->addAction(tr("&Quit"), QCoreApplication::instance(), &QCoreApplication::exit);
     mTray->setContextMenu(mMenu.data());
 
+    connect(mTaskModel, &TaskModel::runningTasksChanged, this, &MainController::updateTray);
+
     connect(mTray, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
         if (reason == QSystemTrayIcon::Trigger) {
             showWindow();
@@ -75,14 +77,15 @@ void MainController::setupTray()
 
 void MainController::updateTray()
 {
-    if (mProcesses.empty()) {
+    auto tasks = mTaskModel->runningTasks();
+    if (tasks.empty()) {
         mTray->setIcon(mIdleIcon);
         mTray->setToolTip(tr("Idle"));
         return;
     }
     QStringList lst;
-    for (const auto* process : mProcesses) {
-        lst << QString("• %1").arg(process->arguments()[1]);
+    for (const auto& task : tasks) {
+        lst << QString("• %1").arg(task->name);
     }
     mTray->setIcon(mBusyIcon);
     mTray->setToolTip(lst.join('\n'));
@@ -94,23 +97,9 @@ void MainController::run()
     for (auto& task : mTaskModel->tasks()) {
         QDateTime nextRun = task->nextRun();
         if ((nextRun.isNull() || nextRun <= now) && task->canRun()) {
-            QProcess* process = task->run();
-            connect(process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
-                    this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
-                        onFinished(process, exitCode);
-            });
-            mProcesses.insert(process);
+            task->run();
         }
     }
-    updateTray();
-}
-
-void MainController::onFinished(QProcess* process, int exitCode)
-{
-    QString cmd = process->arguments()[1];
-    qInfo() << cmd << "finished with code" << exitCode;
-    mProcesses.remove(process);
-    updateTray();
 }
 
 void MainController::showWindow()

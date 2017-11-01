@@ -3,14 +3,14 @@
 #include <QDebug>
 #include <QProcess>
 
-QProcess* Task::run()
+void Task::run()
 {
     Q_ASSERT(!mProcess);
     qInfo("Starting \"%s\"", qPrintable(name));
 
     mProcess = new QProcess();
     QObject::connect(mProcess, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
-                     mProcess, &QObject::deleteLater);
+                     this, &Task::onFinished);
     QObject::connect(mProcess, &QObject::destroyed, this, [this] {
             runningChanged(false);
     });
@@ -18,7 +18,6 @@ QProcess* Task::run()
     mLastRun = QDateTime::currentDateTime();
     mProcess->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
     runningChanged(true);
-    return mProcess;
 }
 
 bool Task::isRunning() const
@@ -49,6 +48,12 @@ QDateTime Task::nextRun() const
         return QDateTime();
     }
     return mLastRun.addSecs(interval.count());
+}
+
+void Task::onFinished(int exitCode)
+{
+    qInfo() << name << "finished with code" << exitCode;
+    mProcess->deleteLater();
 }
 
 std::ostream& operator<<(std::ostream& ostr, const Task& task)
