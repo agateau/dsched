@@ -19,6 +19,7 @@ private:
     void onTaskSelected(const QModelIndex& index);
     void setCurrentTask(const TaskPtr& task);
     void updateTaskView();
+    void appendToTaskLog(const QByteArray& data);
 
     QScopedPointer<Ui_MainWindow> mUi;
     TaskModel* mModel;

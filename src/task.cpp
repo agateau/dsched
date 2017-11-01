@@ -72,6 +72,11 @@ QDateTime Task::nextRun() const
     return mLastRun.addSecs(interval.count());
 }
 
+QString Task::logFilePath() const
+{
+    return mLogFile ? mLogFile->fileName() : QString();
+}
+
 void Task::onFinished(int exitCode)
 {
     qInfo() << name << "finished with code" << exitCode;
@@ -101,6 +106,7 @@ void Task::writeLog(const QByteArray& data)
         mLogFile->write(data);
         mLogFile->flush();
     }
+    taskLogged(data);
 }
 
 std::ostream& operator<<(std::ostream& ostr, const Task& task)

@@ -30,8 +30,11 @@ public:
     QDateTime nextRun() const;
     QDateTime lastRun() const;
 
+    QString logFilePath() const;
+
 Q_SIGNALS:
     void runningChanged(bool running);
+    void taskLogged(const QByteArray& data);
 
 private:
     void onFinished(int exitCode);

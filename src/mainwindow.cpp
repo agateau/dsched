@@ -1,11 +1,15 @@
 #include "mainwindow.h"
 
+#include <QDebug>
+#include <QFile>
+
 #include "taskmodel.h"
 
 MainWindow::MainWindow(TaskModel* model)
 : mUi(new Ui_MainWindow)
 , mModel(model)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     mUi->setupUi(this);
 
     mUi->listView->setModel(model);
@@ -31,7 +35,16 @@ void MainWindow::setCurrentTask(const TaskPtr& task)
         disconnect(mCurrentTask.data(), nullptr, this, nullptr);
     }
     mCurrentTask = task;
+    QString logFilePath = task->logFilePath();
+    if (!logFilePath.isEmpty()) {
+        QFile file(logFilePath);
+        file.open(QIODevice::ReadOnly);
+        QByteArray log = file.readAll();
+        mUi->logTextEdit->clear();
+        mUi->logTextEdit->appendPlainText(log);
+    }
     connect(mCurrentTask.data(), &Task::runningChanged, this, &MainWindow::updateTaskView);
+    connect(mCurrentTask.data(), &Task::taskLogged, this, &MainWindow::appendToTaskLog);
     updateTaskView();
 }
 
@@ -45,4 +58,9 @@ void MainWindow::updateTaskView()
 
     mUi->statusLabel->setText(status);
     mUi->lastRunLabel->setText(lastRun);
+}
+
+void MainWindow::appendToTaskLog(const QByteArray& data)
+{
+    mUi->logTextEdit->appendPlainText(QString::fromUtf8(data));
 }
