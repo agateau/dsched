@@ -101,6 +101,7 @@ void MainController::run()
             mProcesses.insert(process);
         }
     }
+    updateTray();
 }
 
 void MainController::onFinished(QProcess* process, int exitCode)
