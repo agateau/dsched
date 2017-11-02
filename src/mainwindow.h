@@ -20,6 +20,7 @@ private:
     void setCurrentTask(const TaskPtr& task);
     void updateTaskView();
     void appendToTaskLog(const QByteArray& data);
+    void startTask();
 
     QScopedPointer<Ui_MainWindow> mUi;
     TaskModel* mModel;

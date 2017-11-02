@@ -14,6 +14,7 @@ MainWindow::MainWindow(TaskModel* model)
 
     mUi->listView->setModel(model);
     connect(mUi->listView, &QAbstractItemView::clicked, this, &MainWindow::onTaskSelected);
+    connect(mUi->startButton, &QPushButton::clicked, this, &MainWindow::startTask);
 
     mUi->stackedWidget->setCurrentWidget(mUi->welcomePage);
 }
@@ -67,9 +68,17 @@ void MainWindow::updateTaskView()
 
     mUi->statusLabel->setText(status);
     mUi->lastRunLabel->setText(lastRun);
+    mUi->startButton->setEnabled(!mCurrentTask->isRunning());
 }
 
 void MainWindow::appendToTaskLog(const QByteArray& data)
 {
     mUi->logTextEdit->appendPlainText(QString::fromUtf8(data));
+}
+
+void MainWindow::startTask()
+{
+    Q_ASSERT(mCurrentTask);
+    Q_ASSERT(!mCurrentTask->isRunning());
+    mCurrentTask->run();
 }
