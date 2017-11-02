@@ -14,7 +14,7 @@
    <string>Dsched</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <property name="leftMargin">
      <number>0</number>
     </property>
@@ -33,69 +33,115 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QListView" name="listView"/>
-      <widget class="QWidget" name="taskWidget" native="true">
+      <widget class="QStackedWidget" name="stackedWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <layout class="QFormLayout" name="formLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Status:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="statusLabel">
-            <property name="text">
-             <string notr="true">running|not running</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Last run:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="lastRunLabel">
-            <property name="text">
-             <string notr="true">1/1/2001 12:34</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QPlainTextEdit" name="logTextEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::TextBrowserInteraction</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QWidget" name="welcomePage">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Preferred</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>120</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Select a task in the list on the side.</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="detailPage">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Status:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="statusLabel">
+             <property name="text">
+              <string notr="true">running|not running</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Last run:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="lastRunLabel">
+             <property name="text">
+              <string notr="true">1/1/2001 12:34</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="logTextEdit">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextBrowserInteraction</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_2"/>
       </widget>
      </widget>
     </item>

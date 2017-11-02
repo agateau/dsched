@@ -14,6 +14,8 @@ MainWindow::MainWindow(TaskModel* model)
 
     mUi->listView->setModel(model);
     connect(mUi->listView, &QAbstractItemView::clicked, this, &MainWindow::onTaskSelected);
+
+    mUi->stackedWidget->setCurrentWidget(mUi->welcomePage);
 }
 
 void MainWindow::onTaskSelected(const QModelIndex& index)
@@ -35,6 +37,13 @@ void MainWindow::setCurrentTask(const TaskPtr& task)
         disconnect(mCurrentTask.data(), nullptr, this, nullptr);
     }
     mCurrentTask = task;
+
+    if (!mCurrentTask) {
+        mUi->stackedWidget->setCurrentWidget(mUi->welcomePage);
+        return;
+    }
+    mUi->stackedWidget->setCurrentWidget(mUi->detailPage);
+
     QString logFilePath = task->logFilePath();
     if (!logFilePath.isEmpty()) {
         QFile file(logFilePath);
