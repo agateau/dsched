@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QItemSelectionModel>
 
 #include "taskmodel.h"
 
@@ -13,13 +14,13 @@ MainWindow::MainWindow(TaskModel* model)
     mUi->setupUi(this);
 
     mUi->listView->setModel(model);
-    connect(mUi->listView, &QAbstractItemView::clicked, this, &MainWindow::onTaskSelected);
+    connect(mUi->listView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::onCurrentChanged);
     connect(mUi->startButton, &QPushButton::clicked, this, &MainWindow::startTask);
 
     mUi->stackedWidget->setCurrentWidget(mUi->welcomePage);
 }
 
-void MainWindow::onTaskSelected(const QModelIndex& index)
+void MainWindow::onCurrentChanged(const QModelIndex& index)
 {
     int row = index.row();
     TaskPtr task;

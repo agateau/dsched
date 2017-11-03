@@ -16,7 +16,7 @@ public:
     explicit MainWindow(TaskModel* model);
 
 private:
-    void onTaskSelected(const QModelIndex& index);
+    void onCurrentChanged(const QModelIndex& index);
     void setCurrentTask(const TaskPtr& task);
     void updateTaskView();
     void appendToTaskLog(const QByteArray& data);
