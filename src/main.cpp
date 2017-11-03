@@ -9,7 +9,9 @@
 #include "logger.h"
 #include "maincontroller.h"
 #include "task.h"
+#include "taskmodel.h"
 #include "tasktools.h"
+#include "traycontroller.h"
 
 using namespace std;
 
@@ -71,6 +73,9 @@ int main(int argc, char** argv)
         task->setTasksLogDirName(args.logDirName + "/tasks/");
     }
 
-    MainController controller(tasks);
+    TaskModel model;
+    model.setTasks(tasks);
+    MainController controller(&model);
+    TrayController trayController(&model);
     return app.exec();
 }
