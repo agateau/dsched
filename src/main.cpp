@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QMessageBox>
+#include <QStandardPaths>
 
 #include <iostream>
 
@@ -23,8 +24,8 @@ struct CommandLineArgs
     bool debug = false;
 
     CommandLineArgs()
-    : configPath(QDir::home().absoluteFilePath(".config/dsched/dsched.conf"))
-    , logDirName(QDir::home().absoluteFilePath(".cache/dsched"))
+    : configPath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/dsched.conf")
+    , logDirName(QStandardPaths::writableLocation(QStandardPaths::CacheLocation))
     {}
 
     void parseArguments(const QCoreApplication& app)
@@ -49,6 +50,7 @@ struct CommandLineArgs
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    QApplication::setApplicationName("dsched");
 
     CommandLineArgs args;
     args.parseArguments(app);
