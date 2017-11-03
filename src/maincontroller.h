@@ -25,6 +25,7 @@ private:
     void setupTray();
     void updateTray();
     void run();
+    void toggleWindow();
     void showWindow();
 
     QTimer* mTimer;

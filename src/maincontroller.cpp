@@ -49,7 +49,7 @@ void MainController::setupTray()
 
     connect(mTray, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
         if (reason == QSystemTrayIcon::Trigger) {
-            showWindow();
+            toggleWindow();
         }
     });
 
@@ -80,6 +80,15 @@ void MainController::run()
         if ((nextRun.isNull() || nextRun <= now) && task->canRun()) {
             task->run();
         }
+    }
+}
+
+void MainController::toggleWindow()
+{
+    if (mWindow) {
+        mWindow->close();
+    } else {
+        showWindow();
     }
 }
 
