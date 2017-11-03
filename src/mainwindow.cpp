@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 
+#include <QAction>
 #include <QDebug>
 #include <QFile>
+#include <QKeySequence>
 #include <QItemSelectionModel>
 
 #include "taskmodel.h"
@@ -16,6 +18,9 @@ MainWindow::MainWindow(TaskModel* model)
     mUi->listView->setModel(model);
     connect(mUi->listView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::onCurrentChanged);
     connect(mUi->startButton, &QPushButton::clicked, this, &MainWindow::startTask);
+
+    mUi->actionQuit->setShortcut(QKeySequence::Quit);
+    connect(mUi->actionQuit, &QAction::triggered, QCoreApplication::instance(), &QCoreApplication::exit);
 
     mUi->stackedWidget->setCurrentWidget(mUi->welcomePage);
 }
