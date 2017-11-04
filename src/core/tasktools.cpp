@@ -65,12 +65,12 @@ QList<TaskPtr> load(const QString& path, QString* error)
             continue;
         }
         TaskPtr task(new Task);
-        task->name = section.mid(qstrlen(TASK_SECTION_PREFIX));
-        task->command = parser.get(section, "command");
-        task->requires = parser.get(section, "requires");
-        task->interval = parseInterval(parser.get(section, "interval"), error);
+        task->setName(section.mid(qstrlen(TASK_SECTION_PREFIX)));
+        task->setCommand(parser.get(section, "command"));
+        task->setRequires(parser.get(section, "requires"));
+        task->setInterval(parseInterval(parser.get(section, "interval"), error));
         if (!error->isEmpty()) {
-            *error = QString("Error in interval of task %1: %2").arg(task->name).arg(*error);
+            *error = QString("Error in interval of task %1: %2").arg(task->name()).arg(*error);
             return {};
         }
         tasks << task;

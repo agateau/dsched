@@ -25,10 +25,17 @@ public:
 
     Q_ENUM(Status)
 
-    QString name;
-    QString command;
-    std::chrono::seconds interval;
-    QString requires;
+    QString name() const;
+    void setName(const QString& name);
+
+    QString command() const;
+    void setCommand(const QString& command);
+
+    std::chrono::seconds interval() const;
+    void setInterval(const std::chrono::seconds& interval);
+
+    QString requires() const;
+    void setRequires(const QString& requires);
 
     void setTasksLogDirName(const QString& dirName);
     void run();
@@ -49,6 +56,12 @@ private:
     void readProcessOutput();
     void writeTitleLog(const QString& title);
     void writeLog(const QByteArray& data);
+
+    QString mName;
+    QString mCommand;
+    std::chrono::seconds mInterval;
+    QString mRequires;
+
     QDateTime mLastRun;
     QScopedPointer<QFile> mLogFile;
     QProcess* mProcess = nullptr;

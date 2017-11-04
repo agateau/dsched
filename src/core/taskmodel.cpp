@@ -56,7 +56,7 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const
 
     switch (role) {
     case Qt::DisplayRole:
-        return task->name;
+        return task->name();
     case StatusRole:
         return task->status();
     default:

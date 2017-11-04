@@ -4,6 +4,51 @@
 #include <QDir>
 #include <QProcess>
 
+using namespace std::chrono;
+
+QString Task::name() const
+{
+    return mName;
+}
+
+void Task::setName(const QString& name)
+{
+    Q_ASSERT(mName.isEmpty());
+    mName = name;
+}
+
+QString Task::command() const
+{
+    return mCommand;
+}
+
+void Task::setCommand(const QString& command)
+{
+    Q_ASSERT(mCommand.isEmpty());
+    mCommand = command;
+}
+
+seconds Task::interval() const
+{
+    return mInterval;
+}
+
+void Task::setInterval(const seconds& interval)
+{
+    mInterval = interval;
+}
+
+QString Task::requires() const
+{
+    return mRequires;
+}
+
+void Task::setRequires(const QString& requires)
+{
+    Q_ASSERT(mRequires.isEmpty());
+    mRequires = requires;
+}
+
 void Task::setTasksLogDirName(const QString& dirName)
 {
     if (!QDir(dirName).mkpath(".")) {
@@ -11,7 +56,7 @@ void Task::setTasksLogDirName(const QString& dirName)
         return;
     }
 
-    QString path = dirName + "/" + name + ".log";
+    QString path = dirName + "/" + mName + ".log";
     QScopedPointer<QFile> logFile(new QFile(path));
     if (!logFile->open(QIODevice::Append)) {
         qCritical("Cannot create log file \"%s\", command output won't be logged", qPrintable(path));
@@ -23,10 +68,10 @@ void Task::setTasksLogDirName(const QString& dirName)
 void Task::run()
 {
     if (mProcess) {
-        qInfo("Not starting \"%s\", it is already running", qPrintable(name));
+        qInfo("Not starting \"%s\", it is already running", qPrintable(mName));
         return;
     }
-    qInfo("Starting \"%s\"", qPrintable(name));
+    qInfo("Starting \"%s\"", qPrintable(mName));
 
     mProcess = new QProcess();
     mProcess->setProcessChannelMode(QProcess::MergedChannels);
@@ -37,18 +82,18 @@ void Task::run()
     connect(mProcess, &QProcess::readyReadStandardOutput, this, &Task::readProcessOutput);
 
     mLastRun = QDateTime::currentDateTime();
-    writeTitleLog(QString("Starting %1").arg(command));
-    mProcess->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
+    writeTitleLog(QString("Starting %1").arg(mCommand));
+    mProcess->start("/bin/sh", {"-c", mCommand}, QIODevice::ReadOnly);
     statusChanged(status());
 }
 
 bool Task::canRun() const
 {
-    if (requires.isNull()) {
+    if (mRequires.isNull()) {
         return true;
     }
-    qInfo("Running requirement check \"%s\"", qPrintable(requires));
-    int exitCode = QProcess::execute("/bin/sh", {"-c", requires});
+    qInfo("Running requirement check \"%s\"", qPrintable(mRequires));
+    int exitCode = QProcess::execute("/bin/sh", {"-c", mRequires});
     bool ok = exitCode == 0;
     qInfo("Exit code: %d => %s", exitCode, ok ? "Yes" : "No");
     return ok;
@@ -64,7 +109,7 @@ QDateTime Task::nextRun() const
     if (mLastRun.isNull()) {
         return QDateTime();
     }
-    return mLastRun.addSecs(interval.count());
+    return mLastRun.addSecs(mInterval.count());
 }
 
 Task::Status Task::status() const
@@ -82,7 +127,7 @@ QString Task::logFilePath() const
 
 void Task::onFinished(int exitCode)
 {
-    qInfo() << name << "finished with code" << exitCode;
+    qInfo() << mName << "finished with code" << exitCode;
     mExitCode = exitCode;
     mProcess->deleteLater();
     mProcess = nullptr;
@@ -115,11 +160,11 @@ void Task::writeLog(const QByteArray& data)
 
 std::ostream& operator<<(std::ostream& ostr, const Task& task)
 {
-    ostr << qPrintable(task.name) << "\n";
-    ostr << "- command: " << qPrintable(task.command) << "\n";
-    ostr << "- interval: " << task.interval.count() << "s\n";
-    if (!task.requires.isEmpty()) {
-        ostr << "- requires: " << qPrintable(task.requires) << "\n";
+    ostr << qPrintable(task.name()) << "\n";
+    ostr << "- command: " << qPrintable(task.command()) << "\n";
+    ostr << "- interval: " << task.interval().count() << "s\n";
+    if (!task.requires().isEmpty()) {
+        ostr << "- requires: " << qPrintable(task.requires()) << "\n";
     }
     return ostr;
 }

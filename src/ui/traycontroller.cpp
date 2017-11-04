@@ -43,7 +43,7 @@ void TrayController::updateTray()
     auto generateToolTip = [this] {
         QStringList lst;
         for (const auto& task : mTaskModel->runningTasks()) {
-            lst << QString("• %1").arg(task->name);
+            lst << QString("• %1").arg(task->name());
         }
         return lst.join('\n');
     };
