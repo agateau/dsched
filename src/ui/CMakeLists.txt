@@ -3,8 +3,9 @@ project(ui)
 # Sources
 set(dsched_SRCS
     main.cpp
-    traycontroller.cpp
     mainwindow.cpp
+    taskproxymodel.cpp
+    traycontroller.cpp
 )
 
 qt5_add_resources(UI_RESOURCES icons/icons.qrc)
