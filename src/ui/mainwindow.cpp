@@ -79,7 +79,13 @@ void MainWindow::updateTaskView()
 
 void MainWindow::appendToTaskLog(const QByteArray& data)
 {
-    mUi->logTextEdit->appendPlainText(QString::fromUtf8(data));
+    QString text = QString::fromUtf8(data);
+    qDebug() << text;
+    // appendPlainText adds a \n at the end, so remove it if it is already there
+    if (text.endsWith("\n")) {
+        text.chop(1);
+    }
+    mUi->logTextEdit->appendPlainText(text);
 }
 
 void MainWindow::startTask()

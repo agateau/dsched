@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QTimer>
 
-#include "mainwindow.h"
 #include "taskmodel.h"
 
 static const int TIMER_INTERVAL = 30 * 1000;
