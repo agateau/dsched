@@ -118,7 +118,6 @@ void MainWindow::updateTaskView()
 void MainWindow::appendToTaskLog(const QByteArray& data)
 {
     QString text = QString::fromUtf8(data);
-    qDebug() << text;
     // appendPlainText adds a \n at the end, so remove it if it is already there
     if (text.endsWith("\n")) {
         text.chop(1);
