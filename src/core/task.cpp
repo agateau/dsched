@@ -131,7 +131,11 @@ void Task::onFinished(int exitCode)
     mExitCode = exitCode;
     mProcess->deleteLater();
     mProcess = nullptr;
-    writeTitleLog(QString("Finished with code %1").arg(exitCode));
+    if (exitCode == 0) {
+        writeTitleLog("OK");
+    } else {
+        writeTitleLog(QString("Failed. Exit code: %1").arg(exitCode));
+    }
     statusChanged(status());
 }
 
@@ -145,7 +149,7 @@ void Task::readProcessOutput()
 void Task::writeTitleLog(const QString& message)
 {
     QString timeStamp = QDateTime::currentDateTime().toString(Qt::ISODate);
-    QString msg = QString("-- %1: %2 --\n").arg(timeStamp).arg(message);
+    QString msg = QString("Dsched: %1: %2\n").arg(timeStamp).arg(message);
     writeLog(msg.toUtf8());
 }
 

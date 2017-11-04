@@ -8,6 +8,7 @@
 
 #include "taskmodel.h"
 #include "taskproxymodel.h"
+#include "loghighlighter.h"
 
 MainWindow::MainWindow(TaskModel* model)
 : mUi(new Ui_MainWindow)
@@ -26,6 +27,8 @@ MainWindow::MainWindow(TaskModel* model)
     connect(mUi->actionQuit, &QAction::triggered, QCoreApplication::instance(), &QCoreApplication::exit);
 
     mUi->stackedWidget->setCurrentWidget(mUi->welcomePage);
+
+    new LogHighlighter(mUi->logTextEdit->document());
 }
 
 void MainWindow::onCurrentChanged(const QModelIndex& index)

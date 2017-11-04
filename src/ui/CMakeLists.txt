@@ -2,6 +2,7 @@ project(ui)
 
 # Sources
 set(dsched_SRCS
+    loghighlighter.cpp
     main.cpp
     mainwindow.cpp
     taskproxymodel.cpp
