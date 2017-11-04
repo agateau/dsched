@@ -96,7 +96,7 @@ void MainWindow::setCurrentTask(const TaskPtr& task)
         mUi->logTextEdit->clear();
         mUi->logTextEdit->appendPlainText(log);
     }
-    connect(mCurrentTask.data(), &Task::runningChanged, this, &MainWindow::updateTaskView);
+    connect(mCurrentTask.data(), &Task::statusChanged, this, &MainWindow::updateTaskView);
     connect(mCurrentTask.data(), &Task::taskLogged, this, &MainWindow::appendToTaskLog);
     updateTaskView();
 }
@@ -106,12 +106,13 @@ void MainWindow::updateTaskView()
     if (!mCurrentTask) {
         return;
     }
-    QString status = mCurrentTask->isRunning() ? tr("Running") : tr("Not running");
+    bool isRunning = mCurrentTask->status() == Task::Running;
+    QString status = isRunning ? tr("Running") : tr("Not running");
     QString lastRun = mCurrentTask->lastRun().isNull() ? tr("Never") : mCurrentTask->lastRun().toString();
 
     mUi->statusLabel->setText(status);
     mUi->lastRunLabel->setText(lastRun);
-    mUi->startButton->setEnabled(!mCurrentTask->isRunning());
+    mUi->startButton->setEnabled(!isRunning);
 }
 
 void MainWindow::appendToTaskLog(const QByteArray& data)
@@ -128,6 +129,6 @@ void MainWindow::appendToTaskLog(const QByteArray& data)
 void MainWindow::startTask()
 {
     Q_ASSERT(mCurrentTask);
-    Q_ASSERT(!mCurrentTask->isRunning());
+    Q_ASSERT(mCurrentTask->status() != Task::Running);
     mCurrentTask->run();
 }

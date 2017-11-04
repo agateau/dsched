@@ -39,12 +39,7 @@ void Task::run()
     mLastRun = QDateTime::currentDateTime();
     writeTitleLog(QString("Starting %1").arg(command));
     mProcess->start("/bin/sh", {"-c", command}, QIODevice::ReadOnly);
-    runningChanged(true);
-}
-
-bool Task::isRunning() const
-{
-    return mProcess;
+    statusChanged(status());
 }
 
 bool Task::canRun() const
@@ -74,7 +69,7 @@ QDateTime Task::nextRun() const
 
 Task::Status Task::status() const
 {
-    if (isRunning()) {
+    if (mProcess) {
         return Running;
     }
     return mExitCode == 0 ? Idle : Error;
@@ -92,7 +87,7 @@ void Task::onFinished(int exitCode)
     mProcess->deleteLater();
     mProcess = nullptr;
     writeTitleLog(QString("Finished with code %1").arg(exitCode));
-    runningChanged(false);
+    statusChanged(status());
 }
 
 void Task::readProcessOutput()

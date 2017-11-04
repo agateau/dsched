@@ -32,7 +32,6 @@ public:
 
     void setTasksLogDirName(const QString& dirName);
     void run();
-    bool isRunning() const;
 
     bool canRun() const;
     QDateTime nextRun() const;
@@ -42,7 +41,7 @@ public:
     QString logFilePath() const;
 
 Q_SIGNALS:
-    void runningChanged(bool running);
+    void statusChanged(Status status);
     void taskLogged(const QByteArray& data);
 
 private:

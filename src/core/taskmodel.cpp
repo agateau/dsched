@@ -12,7 +12,7 @@ void TaskModel::setTasks(const QList<TaskPtr>& tasks)
     beginResetModel();
     mTasks = tasks;
     for (const auto& task : mTasks) {
-        connect(task.data(), &Task::runningChanged, this, [this, task]() {
+        connect(task.data(), &Task::statusChanged, this, [this, task]() {
                 onTaskStatusChanged(task);
         });
     }
@@ -28,7 +28,7 @@ QList<TaskPtr> TaskModel::runningTasks() const
 {
     QList<TaskPtr> lst;
     for (const auto& task : mTasks) {
-        if (task->isRunning()) {
+        if (task->status() == Task::Running) {
             lst << task;
         }
     }
