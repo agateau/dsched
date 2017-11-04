@@ -27,6 +27,7 @@ Q_SIGNALS:
     void statusChanged();
 
 private:
+    void onTaskStatusChanged(const TaskPtr& task);
     void updateStatus();
 
     QList<TaskPtr> mTasks;

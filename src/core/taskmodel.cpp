@@ -12,7 +12,9 @@ void TaskModel::setTasks(const QList<TaskPtr>& tasks)
     beginResetModel();
     mTasks = tasks;
     for (const auto& task : mTasks) {
-        connect(task.data(), &Task::runningChanged, this, &TaskModel::updateStatus);
+        connect(task.data(), &Task::runningChanged, this, [this, task]() {
+                onTaskStatusChanged(task);
+        });
     }
     endResetModel();
 }
@@ -60,6 +62,18 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const
     default:
         return QVariant();
     }
+}
+
+void TaskModel::onTaskStatusChanged(const TaskPtr& task)
+{
+    int row = mTasks.indexOf(task);
+    if (row < 0) {
+        qWarning() << "Could not find task!";
+        return;
+    }
+    QModelIndex idx = index(row, 0);
+    dataChanged(idx, idx, {StatusRole});
+    updateStatus();
 }
 
 void TaskModel::updateStatus()
