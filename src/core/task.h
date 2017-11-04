@@ -17,7 +17,7 @@ class Task : public QObject, public QSharedData
 {
     Q_OBJECT
 public:
-    enum class Status {
+    enum Status {
         Idle,
         Error,
         Running,

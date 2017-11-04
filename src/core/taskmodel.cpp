@@ -55,6 +55,8 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const
     switch (role) {
     case Qt::DisplayRole:
         return task->name;
+    case StatusRole:
+        return task->status();
     default:
         return QVariant();
     }
@@ -63,16 +65,16 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const
 void TaskModel::updateStatus()
 {
     Task::Status status = [this] {
-        auto status = Task::Status::Idle;
+        auto status = Task::Idle;
         for (const auto& task : mTasks) {
             Task::Status taskStatus = task->status();
-            if (taskStatus == Task::Status::Running) {
+            if (taskStatus == Task::Running) {
                 // No need to go to the end of the list
-                return Task::Status::Running;
+                return Task::Running;
             }
-            if (taskStatus == Task::Status::Error) {
+            if (taskStatus == Task::Error) {
                 // One error so we will at least return error, unless we have a running task
-                status = Task::Status::Error;
+                status = Task::Error;
             }
         }
         return status;

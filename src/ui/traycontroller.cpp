@@ -49,15 +49,15 @@ void TrayController::updateTray()
     };
 
     switch (mTaskModel->status()) {
-    case Task::Status::Idle:
+    case Task::Idle:
         mTray->setIcon(mIdleIcon);
         mTray->setToolTip(tr("Idle"));
         return;
-    case Task::Status::Error:
+    case Task::Error:
         mTray->setIcon(mErrorIcon);
         mTray->setToolTip(tr("Error"));
         return;
-    case Task::Status::Running:
+    case Task::Running:
         mTray->setIcon(mBusyIcon);
         mTray->setToolTip(generateToolTip());
         return;

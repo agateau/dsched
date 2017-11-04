@@ -8,6 +8,10 @@
 class TaskModel : public QAbstractListModel {
     Q_OBJECT
 public:
+    enum {
+        StatusRole = Qt::UserRole,
+    };
+
     TaskModel(QObject* parent = nullptr);
 
     void setTasks(const QList<TaskPtr>& tasks);

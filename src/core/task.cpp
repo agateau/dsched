@@ -75,9 +75,9 @@ QDateTime Task::nextRun() const
 Task::Status Task::status() const
 {
     if (isRunning()) {
-        return Status::Running;
+        return Running;
     }
-    return mExitCode == 0 ? Status::Idle : Status::Error;
+    return mExitCode == 0 ? Idle : Error;
 }
 
 QString Task::logFilePath() const
