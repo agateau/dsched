@@ -2,6 +2,9 @@ project(core)
 
 set(core_SRCS
     iniparser.cpp
+    task.cpp
+    taskmodel.cpp
+    tasktools.cpp
 )
 
 add_library(dschedcore STATIC ${core_SRCS})

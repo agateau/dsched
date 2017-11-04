@@ -5,9 +5,6 @@ set(dsched_SRCS
     logger.cpp
     main.cpp
     maincontroller.cpp
-    task.cpp
-    taskmodel.cpp
-    tasktools.cpp
     traycontroller.cpp
     mainwindow.cpp
 )
