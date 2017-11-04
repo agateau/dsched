@@ -2,9 +2,7 @@ project(ui)
 
 # Sources
 set(dsched_SRCS
-    logger.cpp
     main.cpp
-    maincontroller.cpp
     traycontroller.cpp
     mainwindow.cpp
 )

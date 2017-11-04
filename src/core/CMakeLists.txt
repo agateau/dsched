@@ -2,6 +2,8 @@ project(core)
 
 set(core_SRCS
     iniparser.cpp
+    logger.cpp
+    maincontroller.cpp
     task.cpp
     taskmodel.cpp
     tasktools.cpp
