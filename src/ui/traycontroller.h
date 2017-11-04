@@ -29,6 +29,7 @@ private:
     QScopedPointer<QMenu> mMenu;
     QIcon mIdleIcon;
     QIcon mBusyIcon;
+    QIcon mErrorIcon;
     QPointer<MainWindow> mWindow;
 };
 

@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>busy.svg</file>
+        <file>error.svg</file>
         <file>idle.svg</file>
     </qresource>
 </RCC>

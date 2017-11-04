@@ -17,6 +17,14 @@ class Task : public QObject, public QSharedData
 {
     Q_OBJECT
 public:
+    enum class Status {
+        Idle,
+        Error,
+        Running,
+    };
+
+    Q_ENUM(Status)
+
     QString name;
     QString command;
     std::chrono::seconds interval;
@@ -29,6 +37,7 @@ public:
     bool canRun() const;
     QDateTime nextRun() const;
     QDateTime lastRun() const;
+    Status status() const;
 
     QString logFilePath() const;
 
@@ -44,6 +53,7 @@ private:
     QDateTime mLastRun;
     QScopedPointer<QFile> mLogFile;
     QProcess* mProcess = nullptr;
+    int mExitCode = 0;
 };
 
 using TaskPtr = QExplicitlySharedDataPointer<Task>;

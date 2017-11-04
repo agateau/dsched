@@ -21,12 +21,13 @@ void TrayController::setupTray()
 {
     mIdleIcon = QIcon(QPixmap(":/idle.svg"));
     mBusyIcon = QIcon(QPixmap(":/busy.svg"));
+    mErrorIcon = QIcon(QPixmap(":/error.svg"));
 
     mMenu->addAction(tr("&Show"), this, &TrayController::showWindow);
     mMenu->addAction(tr("&Quit"), QCoreApplication::instance(), &QCoreApplication::exit);
     mTray->setContextMenu(mMenu.data());
 
-    connect(mTaskModel, &TaskModel::runningTasksChanged, this, &TrayController::updateTray);
+    connect(mTaskModel, &TaskModel::statusChanged, this, &TrayController::updateTray);
 
     connect(mTray, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
         if (reason == QSystemTrayIcon::Trigger) {
@@ -39,18 +40,28 @@ void TrayController::setupTray()
 
 void TrayController::updateTray()
 {
-    auto tasks = mTaskModel->runningTasks();
-    if (tasks.empty()) {
+    auto generateToolTip = [this] {
+        QStringList lst;
+        for (const auto& task : mTaskModel->runningTasks()) {
+            lst << QString("• %1").arg(task->name);
+        }
+        return lst.join('\n');
+    };
+
+    switch (mTaskModel->status()) {
+    case Task::Status::Idle:
         mTray->setIcon(mIdleIcon);
         mTray->setToolTip(tr("Idle"));
         return;
+    case Task::Status::Error:
+        mTray->setIcon(mErrorIcon);
+        mTray->setToolTip(tr("Error"));
+        return;
+    case Task::Status::Running:
+        mTray->setIcon(mBusyIcon);
+        mTray->setToolTip(generateToolTip());
+        return;
     }
-    QStringList lst;
-    for (const auto& task : tasks) {
-        lst << QString("• %1").arg(task->name);
-    }
-    mTray->setIcon(mBusyIcon);
-    mTray->setToolTip(lst.join('\n'));
 }
 
 

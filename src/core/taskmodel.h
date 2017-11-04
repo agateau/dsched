@@ -14,15 +14,19 @@ public:
 
     QList<TaskPtr> tasks() const;
     QList<TaskPtr> runningTasks() const;
+    Task::Status status() const;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
 Q_SIGNALS:
-    void runningTasksChanged();
+    void statusChanged();
 
 private:
+    void updateStatus();
+
     QList<TaskPtr> mTasks;
+    Task::Status mStatus = Task::Status::Idle;
 };
 
 #endif /* TASKMODEL_H */

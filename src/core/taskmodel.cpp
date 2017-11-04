@@ -12,7 +12,7 @@ void TaskModel::setTasks(const QList<TaskPtr>& tasks)
     beginResetModel();
     mTasks = tasks;
     for (const auto& task : mTasks) {
-        connect(task.data(), &Task::runningChanged, this, &TaskModel::runningTasksChanged);
+        connect(task.data(), &Task::runningChanged, this, &TaskModel::updateStatus);
     }
     endResetModel();
 }
@@ -31,6 +31,11 @@ QList<TaskPtr> TaskModel::runningTasks() const
         }
     }
     return lst;
+}
+
+Task::Status TaskModel::status() const
+{
+    return mStatus;
 }
 
 int TaskModel::rowCount(const QModelIndex& parent) const
@@ -52,5 +57,28 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const
         return task->name;
     default:
         return QVariant();
+    }
+}
+
+void TaskModel::updateStatus()
+{
+    Task::Status status = [this] {
+        auto status = Task::Status::Idle;
+        for (const auto& task : mTasks) {
+            Task::Status taskStatus = task->status();
+            if (taskStatus == Task::Status::Running) {
+                // No need to go to the end of the list
+                return Task::Status::Running;
+            }
+            if (taskStatus == Task::Status::Error) {
+                // One error so we will at least return error, unless we have a running task
+                status = Task::Status::Error;
+            }
+        }
+        return status;
+    }();
+    if (mStatus != status) {
+        mStatus = status;
+        statusChanged();
     }
 }

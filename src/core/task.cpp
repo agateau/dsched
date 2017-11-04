@@ -72,6 +72,14 @@ QDateTime Task::nextRun() const
     return mLastRun.addSecs(interval.count());
 }
 
+Task::Status Task::status() const
+{
+    if (isRunning()) {
+        return Status::Running;
+    }
+    return mExitCode == 0 ? Status::Idle : Status::Error;
+}
+
 QString Task::logFilePath() const
 {
     return mLogFile ? mLogFile->fileName() : QString();
@@ -80,6 +88,7 @@ QString Task::logFilePath() const
 void Task::onFinished(int exitCode)
 {
     qInfo() << name << "finished with code" << exitCode;
+    mExitCode = exitCode;
     mProcess->deleteLater();
     mProcess = nullptr;
     writeTitleLog(QString("Finished with code %1").arg(exitCode));
