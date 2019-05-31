@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>appicon.svg</file>
         <file>busy.svg</file>
         <file>error.svg</file>
         <file>idle.svg</file>

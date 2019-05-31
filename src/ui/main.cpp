@@ -2,6 +2,7 @@
 #include <QCommandLineParser>
 #include <QDebug>
 #include <QDir>
+#include <QIcon>
 #include <QMessageBox>
 #include <QStandardPaths>
 
@@ -51,6 +52,7 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("dsched");
+    app.setWindowIcon(QIcon(":/appicon.svg"));
 
     CommandLineArgs args;
     args.parseArguments(app);

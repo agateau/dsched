@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Dsched
+GenericName=Desktop scheduler
+Comment=A tool to schedule tasks
+Type=Application
+Exec=dsched
+Icon=dsched
+Terminal=false
+Categories=Qt;Utility;System;

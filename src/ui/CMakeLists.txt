@@ -26,3 +26,13 @@ target_link_libraries(dsched dschedcore Qt5::Core Qt5::Widgets)
 install(TARGETS dsched
     DESTINATION bin
 )
+
+install(FILES icons/dsched.desktop
+    DESTINATION share/applications
+    RENAME com.agateau.dsched.desktop
+)
+
+install(FILES icons/appicon.svg
+    DESTINATION share/icons/hicolor/scalable/apps
+    RENAME dsched.svg
+)
