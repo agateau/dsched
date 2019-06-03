@@ -20,7 +20,6 @@
 
 #include <QAction>
 #include <QDebug>
-#include <QFile>
 #include <QItemSelectionModel>
 #include <QKeySequence>
 
@@ -75,14 +74,9 @@ void MainWindow::setCurrentTask(const TaskPtr& task)
     }
     mUi->stackedWidget->setCurrentWidget(mUi->detailPage);
 
-    QString logFilePath = task->logFilePath();
-    if (!logFilePath.isEmpty()) {
-        QFile file(logFilePath);
-        file.open(QIODevice::ReadOnly);
-        QByteArray log = file.readAll();
-        mUi->logTextEdit->clear();
-        mUi->logTextEdit->appendPlainText(log);
-    }
+    mUi->logTextEdit->clear();
+    mUi->logTextEdit->appendPlainText(task->readLogFile());
+
     connect(mCurrentTask.data(), &Task::statusChanged, this, &MainWindow::updateTaskView);
     connect(mCurrentTask.data(), &Task::taskLogged, this, &MainWindow::appendToTaskLog);
     updateTaskView();

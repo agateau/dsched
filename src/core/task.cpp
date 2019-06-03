@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 #include <QProcess>
 
 using namespace std::chrono;
@@ -141,6 +142,23 @@ Task::Status Task::status() const
 QString Task::logFilePath() const
 {
     return mLogFile ? mLogFile->fileName() : QString();
+}
+
+QByteArray Task::readLogFile() const
+{
+    QString path = logFilePath();
+    if (path.isEmpty()) {
+        return {};
+    }
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning("Failed to open \"%s\": %s", qPrintable(path), qPrintable(file.errorString()));
+        return {};
+    }
+    QByteArray log = file.readAll();
+    log.replace('\0', '?');
+    qDebug() << path << file.size() << log.length();
+    return log;
 }
 
 void Task::onFinished(int exitCode)

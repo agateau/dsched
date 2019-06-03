@@ -65,6 +65,8 @@ public:
 
     QString logFilePath() const;
 
+    QByteArray readLogFile() const;
+
 Q_SIGNALS:
     void statusChanged(Status status);
     void taskLogged(const QByteArray& data);
