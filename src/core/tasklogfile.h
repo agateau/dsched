@@ -18,6 +18,9 @@ public:
     QByteArray read() const;
 
 private:
+    void openFile();
+    void rotate();
+
     const QString mPath;
     std::unique_ptr<QFile> mFile;
 };
