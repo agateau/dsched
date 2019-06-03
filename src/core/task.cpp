@@ -18,12 +18,16 @@
  */
 #include "task.h"
 
+#include "tasklogfile.h"
+
 #include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QProcess>
 
 using namespace std::chrono;
+
+Task::~Task() = default;
 
 QString Task::name() const
 {
@@ -76,12 +80,7 @@ void Task::setTasksLogDirName(const QString& dirName)
     }
 
     QString path = dirName + "/" + mName + ".log";
-    QScopedPointer<QFile> logFile(new QFile(path));
-    if (!logFile->open(QIODevice::Append)) {
-        qCritical("Cannot create log file \"%s\", command output won't be logged", qPrintable(path));
-        return;
-    }
-    mLogFile.reset(logFile.take());
+    mLogFile = std::make_unique<TaskLogFile>(path);
 }
 
 void Task::run()
@@ -139,26 +138,9 @@ Task::Status Task::status() const
     return mExitCode == 0 ? Idle : Error;
 }
 
-QString Task::logFilePath() const
-{
-    return mLogFile ? mLogFile->fileName() : QString();
-}
-
 QByteArray Task::readLogFile() const
 {
-    QString path = logFilePath();
-    if (path.isEmpty()) {
-        return {};
-    }
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning("Failed to open \"%s\": %s", qPrintable(path), qPrintable(file.errorString()));
-        return {};
-    }
-    QByteArray log = file.readAll();
-    log.replace('\0', '?');
-    qDebug() << path << file.size() << log.length();
-    return log;
+    return mLogFile ? mLogFile->read() : QByteArray();
 }
 
 void Task::onFinished(int exitCode)
@@ -193,7 +175,6 @@ void Task::writeLog(const QByteArray& data)
 {
     if (mLogFile) {
         mLogFile->write(data);
-        mLogFile->flush();
     }
     taskLogged(data);
 }

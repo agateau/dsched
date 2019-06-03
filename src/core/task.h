@@ -19,6 +19,8 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include "tasklogfile.h"
+
 #include <QFile>
 #include <QDateTime>
 #include <QObject>
@@ -28,6 +30,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <memory>
 
 class QProcess;
 
@@ -40,6 +43,8 @@ public:
         Error,
         Running,
     };
+
+    ~Task();
 
     Q_ENUM(Status)
 
@@ -63,8 +68,6 @@ public:
     QDateTime lastRun() const;
     Status status() const;
 
-    QString logFilePath() const;
-
     QByteArray readLogFile() const;
 
 Q_SIGNALS:
@@ -83,7 +86,7 @@ private:
     QString mRequires;
 
     QDateTime mLastRun;
-    QScopedPointer<QFile> mLogFile;
+    std::unique_ptr<TaskLogFile> mLogFile;
     QProcess* mProcess = nullptr;
     int mExitCode = 0;
 };

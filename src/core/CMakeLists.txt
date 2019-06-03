@@ -5,6 +5,7 @@ set(core_SRCS
     logger.cpp
     maincontroller.cpp
     task.cpp
+    tasklogfile.cpp
     taskmodel.cpp
     tasktools.cpp
 )

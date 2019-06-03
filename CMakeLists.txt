@@ -10,6 +10,7 @@ find_package(Qt5 CONFIG REQUIRED Core Widgets)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
+set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(src)
 
